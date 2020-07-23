@@ -1,2 +1,4 @@
 # from-yolov3-result.txt-to-img
 To process a list of images,from https://github.com/AlexeyAB/darknet get result.txt,then draw boxes on imgs and save
+
+从yolo的检测结果result.txt批量draw结果图片
