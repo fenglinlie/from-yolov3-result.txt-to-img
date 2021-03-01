@@ -1,6 +1,9 @@
 import cv2
 import os
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 imgPath="./haze"
 resPath="./result/2/"
 
@@ -37,6 +40,13 @@ with open("result.txt", "r") as f:
     # for box in imgBoxes:
         # print(box[0:box.rfind('*')])
     #得到两个List后
+    
+    cmap = plt.get_cmap('tab20b')
+    colors = [cmap(i)[:3] for i in np.linspace(0, 1, 20)]
+    color = colors[int(4) % len(colors)]
+    #修改int(4)里面的数字换为其他颜色
+    color = [i * 255 for i in color]     
+    
     for imgName in imgList:
         i=0 #一个图片几个框
         im = cv2.imread(os.path.join(imgPath,imgName)+".jpg")
@@ -53,11 +63,13 @@ with open("result.txt", "r") as f:
                 text=boxList[0]+boxList[1]
                 
                 #画框，文本
-                cv2.rectangle(im,(sx1,sy1),(sx2,sy2),(0,255,0),3)
+                cv2.rectangle(im,(sx1,sy1),(sx2,sy2),color,3)
                 if sy1 > 25:
-                    im=cv2.putText(im, text, (sx1,sy1-6), cv2.FONT_HERSHEY_COMPLEX,0.7, (0, 255, 0) )
+                    cv2.rectangle(im, (sx1, sy1-20), (sx1+(len(boxList[0])+1)*17, sy1), color, -1)
+                    cv2.putText(im, text,(sx1, sy1-10),0, 0.75, (255,255,255),2)
                 else:
-                    im=cv2.putText(im, text, (sx1,sy2+20), cv2.FONT_HERSHEY_COMPLEX,0.7, (0, 255, 0) )
+                    cv2.rectangle(im, (sx1, sy1), (sx1+(len(boxList[0])+1)*17, sy1+20), color, -1)
+                    cv2.putText(im, boxList[0]  + boxList[1],(sx1, sy1+20),0, 0.75, (255,255,255),2)
             else:
                 break      
         cv2.imwrite(os.path.join(resPath,imgName)+"_result.jpg",im)
